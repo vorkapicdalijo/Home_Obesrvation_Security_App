@@ -1,17 +1,25 @@
 package hr.fer.iot.hos.controller;
 
+import hr.fer.iot.hos.model.User;
+import hr.fer.iot.hos.model.payload.MessageResponse;
+import hr.fer.iot.hos.model.payload.Record;
+import hr.fer.iot.hos.repository.RecordRepository;
+import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FaceDetectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Collection;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -20,16 +28,23 @@ public class FaceController {
 
     @Autowired
     FaceDetectionService faceDetectionService;
-    private static final List<byte[]> records = new ArrayList<>();
+
+    @Autowired
+    UserRespository userRespository;
+    @Autowired
+    RecordRepository recordRepository;
 
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<byte[]>> getRecords(){
+    public ResponseEntity<Collection<Record>> getRecords(Authentication auth){
+        User userDb = userRespository.findByUsername(auth.getName()).get();
+        Collection<Record> records = recordRepository.findByUser(userDb);
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
-    public @ResponseBody byte[] postImage(@RequestParam("file") MultipartFile file) {
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PostMapping(value = "/image")
+    public ResponseEntity<?> postImage(@RequestParam("file") MultipartFile file, Authentication auth) {
 
         byte[] bytes = null;
         try {
@@ -37,8 +52,19 @@ public class FaceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        records.add(bytes);
-        return bytes;
+
+        Record record = new Record();
+        if(userRespository.existsByUsername(auth.getName())){
+            User userDb = userRespository.findByUsername(auth.getName()).get();
+            record.setUser(userDb);
+            record.setImage(bytes);
+            record.setImageDisplay(Base64.getEncoder().encodeToString(bytes));
+            record.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            recordRepository.save(record);
+            return ResponseEntity.ok(new MessageResponse("Face detection finished!"));
+        }
+
+        return ResponseEntity.ok(new MessageResponse("Error occured!"));
 
     }
 }
