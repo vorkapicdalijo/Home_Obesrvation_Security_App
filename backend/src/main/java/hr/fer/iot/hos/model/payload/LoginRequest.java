@@ -1,6 +1,7 @@
 package hr.fer.iot.hos.model.payload;
 
-import jakarta.validation.constraints.NotBlank;
+
+import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
     @NotBlank

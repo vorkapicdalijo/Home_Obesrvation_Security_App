@@ -1,5 +1,6 @@
 package hr.fer.iot.hos.model;
-import jakarta.persistence.*;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "roles")

@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/main")
 public class FaceController {
 
     @Autowired

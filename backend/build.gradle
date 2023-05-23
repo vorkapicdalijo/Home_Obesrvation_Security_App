@@ -1,12 +1,12 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '2.7.3'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'hr.fer.iot'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.openpnp/opencv
     implementation 'org.openpnp:opencv:4.7.0-0'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation 'org.slf4j:slf4j-api:2.0.7'
+    // implementation 'org.slf4j:slf4j-api:2.0.7'
     //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     //security
@@ -32,6 +32,8 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     //jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.5'
 
 
 }

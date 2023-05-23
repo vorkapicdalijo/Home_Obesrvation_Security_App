@@ -11,7 +11,6 @@ import hr.fer.iot.hos.repository.RoleRepository;
 import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.security.jwt.JwtUtils;
 import hr.fer.iot.hos.security.services.UserDetailsImpl;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +26,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
