@@ -1,0 +1,50 @@
+<div class="container w-50 p-5 m-5 mx-auto border">
+  <h2 class="text-center mb-5">REGISTRATION</h2>
+  <form
+    [formGroup]="registrationForm"
+    (ngSubmit)="onSubmit()">
+    <div class="mx-auto d-flex flex-column justify-content-center align-items-center">
+      <mat-form-field appearance="outline"
+                      class="col">
+        <mat-label>
+          Korisničko ime:
+        </mat-label>
+        <input matInput
+              type="text"
+              formControlName="username">
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      class="col">
+        <mat-label>
+          E-mail adresa:
+        </mat-label>
+        <input matInput
+              type="email"
+              formControlName="email">
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      class="col">
+        <mat-label>
+          Zaporka:
+        </mat-label>
+        <input matInput
+              type="password"
+              formControlName="password">
+      </mat-form-field>
+      <div>
+        <button mat-raised-button type="submit" color="primary" [disabled]="!registrationForm.valid">Sign Up</button>
+      </div>
+
+      <div class="alert alert-warning mt-5" *ngIf="registrationSubmitted && registrationFailed">
+        Signup failed!<br />{{ errorMessage }}
+      </div>
+    </div>
+  </form>
+  <div class="mx-auto text-center mt-5">
+    <p>Postojeći korisnik ?</p>
+    <button mat-raised-button (click)="loginInstead()">Prijava</button>
+  </div>
+  <div class="alert alert-success" *ngIf="registrationSuccessful">
+    Your registration is successful!
+  </div>
+</div>
