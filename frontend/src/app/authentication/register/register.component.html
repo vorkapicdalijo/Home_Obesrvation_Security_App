@@ -1,5 +1,5 @@
 <div class="container w-50 p-5 m-5 mx-auto border">
-  <h2 class="text-center mb-5">REGISTRATION</h2>
+  <h2 class="text-center mb-5">REGISTRACIJA</h2>
   <form
     [formGroup]="registrationForm"
     (ngSubmit)="onSubmit()">
@@ -30,6 +30,15 @@
         <input matInput
               type="password"
               formControlName="password">
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      class="col">
+        <mat-label>
+          Potvrdi zaporku:
+        </mat-label>
+        <input matInput
+              type="password"
+              formControlName="confirmPassword">
       </mat-form-field>
       <div>
         <button mat-raised-button type="submit" color="primary" [disabled]="!registrationForm.valid">Sign Up</button>

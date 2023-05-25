@@ -15,17 +15,17 @@ export class AuthenticationService {
   constructor(private http: HttpClient) { }
 
 
-  public registerUser(username: string, email: string, password: string): Observable<any> {
+  public registerUser(username: string, email: string, password: string, confirmPassword: string): Observable<any> {
     return this.http.post(
       environment.localApiUrl + 'auth/signup',
-      {username, email, password},
+      {username, email, password, confirmPassword},
       httpOptions
     ).pipe(res => res as any || null);
   }
 
   public loginUser(username: string, password: string): Observable<any> {
     return this.http.post(
-      environment.localApiUrl + 'auth/signin',
+      environment.localApiUrl + 'auth/login',
       {username, password},
       httpOptions
     ).pipe(res => res as any || null);
@@ -33,7 +33,7 @@ export class AuthenticationService {
 
   public logoutUser(): Observable<any> {
     return this.http.post(
-      environment.localApiUrl + 'auth/signout',
+      environment.localApiUrl + 'auth/logout',
       {},
       httpOptions
     ).pipe(res => res as any || null);

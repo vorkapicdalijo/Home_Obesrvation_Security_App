@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
           this.storageService.saveUser(response);
           console.log(response);
           this.loginSuccessful = true;
-          this.reloadPage();
+          this.router.navigate(['/home'])
         },
         error: error => {
           this.loginFailed = true;

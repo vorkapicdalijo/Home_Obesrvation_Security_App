@@ -29,7 +29,9 @@ export class RegisterComponent implements OnInit {
     this.registrationForm = this.fb.group({
       username: new FormControl('', Validators.required),
       email: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.compose(
+        [Validators.minLength(6), Validators.required])),
+      confirmPassword: new FormControl('', Validators.required)
     });
   }
 
@@ -37,14 +39,16 @@ export class RegisterComponent implements OnInit {
     let username = this.registrationForm.get('username')?.value;
     let email = this.registrationForm.get('email')?.value;
     let password = this.registrationForm.get('password')?.value;
+    let confirmPassword = this.registrationForm.get('confirmPassword')?.value;
 
     this.registrationSubmitted = true;
 
-    this.authenticationService.registerUser(username, email, password)
+    this.authenticationService.registerUser(username, email, password, confirmPassword)
       .subscribe({
         next: response => {
           console.log(response);
           this.registrationSuccessful = true;
+          this.router.navigate(['/home']);
         },
         error: error => {
           this.registrationFailed = true;

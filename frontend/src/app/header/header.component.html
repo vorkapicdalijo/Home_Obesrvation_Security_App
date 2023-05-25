@@ -1,9 +1,12 @@
 <mat-toolbar class="d-flex justify-content-between">
   <div type="button"
-       class="d-flex align-items-center">
+       class="d-flex align-items-center justify-content-between w-100">
     <div class="d-flex flex-column py-5">
       <span class="fs-2 text-black-50">HOS</span>
       <span class="fs-1">Internet Stvari</span>
+    </div>
+    <div *ngIf="isLoggedIn()" class="me-5">
+      <button mat-raised-button color="primary" (click)="logout()">Odjava</button>
     </div>
   </div>
 </mat-toolbar>
