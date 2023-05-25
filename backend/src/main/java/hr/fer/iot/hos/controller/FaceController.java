@@ -8,11 +8,9 @@ import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FaceDetectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +19,7 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Collection;
 
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/main")
 public class FaceController {
