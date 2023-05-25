@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Collection;
 
-//@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 @RequestMapping("/api/main")
 public class FaceController {
