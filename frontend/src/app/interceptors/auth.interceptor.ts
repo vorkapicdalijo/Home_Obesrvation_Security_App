@@ -14,7 +14,3 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return next.handle(req);
   }
 }
-
-export const httpInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
-];

@@ -4,11 +4,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { httpInterceptorProviders } from './interceptors/auth.interceptor';
+import { HttpRequestInterceptor } from './interceptors/auth.interceptor';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RegisterComponent } from './authentication/register/register.component';
@@ -39,7 +39,12 @@ import { AuthGuard } from './authentication/guard/auth.guard';
     MatFormFieldModule,
     AppRoutingModule
   ],
-  providers: [httpInterceptorProviders, AuthGuard],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpRequestInterceptor ,
+      multi: true
+    }, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
