@@ -1,9 +1,6 @@
-package hr.fer.iot.hos.model.payload;
-
-import hr.fer.iot.hos.model.User;
+package hr.fer.iot.hos.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
@@ -26,13 +23,19 @@ public class Record {
     @Column(name = "timestamp", nullable = false)
     private Timestamp timestamp;
 
-    public Record(){}
+    @ManyToOne
+    @JoinColumn(name = "device_id", nullable = false)
+    private Device device;
 
-    public Record(User user, byte[] image, String imageDisplay, Timestamp timestamp) {
+    public Record() {
+    }
+
+    public Record(User user, byte[] image, String imageDisplay, Timestamp timestamp, Device device) {
         this.user = user;
         this.image = image;
         this.imageDisplay = imageDisplay;
         this.timestamp = timestamp;
+        this.device = device;
     }
 
     public Long getId() {
@@ -73,5 +76,13 @@ public class Record {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
     }
 }

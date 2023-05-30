@@ -1,7 +1,8 @@
 package hr.fer.iot.hos.repository;
 
+import hr.fer.iot.hos.model.Device;
 import hr.fer.iot.hos.model.User;
-import hr.fer.iot.hos.model.payload.Record;
+import hr.fer.iot.hos.model.Record;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
@@ -15,5 +16,13 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
      * @return collection of records
      */
     Collection<Record> findByUser(User user);
+
+    /**
+     * Returns all records associated with the device
+     *
+     * @param device - device object to search records for
+     * @return collection of records
+     */
+    Collection<Record> findByDevice(Device device);
 
 }

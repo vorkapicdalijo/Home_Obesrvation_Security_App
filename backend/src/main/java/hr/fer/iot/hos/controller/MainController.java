@@ -1,50 +1,112 @@
-//package hr.fer.iot.hos.controller;
-//
-//import hr.fer.iot.hos.model.DetectionModel;
-//import hr.fer.iot.hos.service.DnnProcessor;
-//import org.opencv.core.Mat;
-//import org.opencv.core.MatOfByte;
-//import org.opencv.core.Scalar;
-//import org.opencv.imgcodecs.Imgcodecs;
-//import org.opencv.imgproc.Imgproc;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.MediaType;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//@Controller("/api")
-//public class MainController {
-//
-//    DnnProcessor processor;
-//    List<DetectionModel> detectObject = new ArrayList<DetectionModel>();
-//
-//    @GetMapping("/hello")
-//    public String index() {
-//        return "Greetings from Spring Boot!";
-//    }
-//
-//    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
-//    public byte[] postImage(MultipartFile file) throws IOException {
-//
-//        Mat frame = Imgcodecs.imdecode(new MatOfByte(file.getBytes()), Imgcodecs.IMREAD_UNCHANGED);
-//        detectObject = processor.getObjectsInFrame(frame, false);
-//        for (DetectionModel obj : detectObject) {
-//            Imgproc.rectangle(frame, obj.getLeftBottom(), obj.getRightTop(), new Scalar(255, 0, 0), 2);
-//            Imgproc.putText(frame, obj.getObjectName(), obj.getLeftBottom(), Imgproc.FONT_HERSHEY_PLAIN, 2, new Scalar (255, 255, 255));
-//        }
-//        return mat2Image(frame);
-//
-//    }
-//
-//    private static byte[] mat2Image(Mat frame) {
-//        MatOfByte buffer = new MatOfByte();
-//        Imgcodecs.imencode(".jpg", frame, buffer);
-//        return buffer.toArray();
-//    }
-//}
+package hr.fer.iot.hos.controller;
+
+import hr.fer.iot.hos.model.Device;
+import hr.fer.iot.hos.model.User;
+import hr.fer.iot.hos.model.payload.DeviceRequest;
+import hr.fer.iot.hos.model.payload.MessageResponse;
+import hr.fer.iot.hos.model.Record;
+import hr.fer.iot.hos.repository.DeviceRepository;
+import hr.fer.iot.hos.repository.RecordRepository;
+import hr.fer.iot.hos.repository.UserRespository;
+import hr.fer.iot.hos.service.FaceDetectionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Collection;
+
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
+@RestController
+@RequestMapping("/api/main")
+public class MainController {
+
+    @Autowired
+    FaceDetectionService faceDetectionService;
+
+    @Autowired
+    UserRespository userRespository;
+    @Autowired
+    RecordRepository recordRepository;
+
+    @Autowired
+    DeviceRepository deviceRepository;
+
+    @GetMapping(value = "/records")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Collection<Record>> getRecords(Authentication auth){
+        User userDb = userRespository.findByUsername(auth.getName()).get();
+        Collection<Record> records = recordRepository.findByUser(userDb);
+        return new ResponseEntity<>(records, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PostMapping(value = "/image")
+    public ResponseEntity<?> postImage(@RequestParam("file") MultipartFile file, @RequestParam("device") String deviceId, Authentication auth) {
+
+        byte[] bytes = null;
+        try {
+            bytes = faceDetectionService.detectFaceApi(file.getBytes()).toImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Record record = new Record();
+        if(userRespository.existsByUsername(auth.getName())){
+            User userDb = userRespository.findByUsername(auth.getName()).get();
+            Device device = deviceRepository.findByDeviceId(deviceId);
+            record.setUser(userDb);
+            record.setImage(bytes);
+            record.setImageDisplay(Base64.getEncoder().encodeToString(bytes));
+            record.setTimestamp(new Timestamp(System.currentTimeMillis()));
+            record.setDevice(device);
+            recordRepository.save(record);
+            return ResponseEntity.ok(new MessageResponse("Face detection finished!"));
+        }
+
+        return ResponseEntity.ok(new MessageResponse("Error occured!"));
+
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PostMapping(value = "/addDevice")
+    public ResponseEntity<?> addDevice(Authentication auth, @Valid @RequestBody DeviceRequest deviceRequest){
+        if (deviceRepository.existsByDeviceId(deviceRequest.getDeviceId())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: device ID is already in use!"));
+        }
+
+        User userDb = userRespository.findByUsername(auth.getName()).get();
+        Device device = new Device(
+                deviceRequest.getDeviceId(),
+                deviceRequest.getLocation(),
+                new Timestamp(System.currentTimeMillis()),
+                userDb
+        );
+        deviceRepository.save(device);
+        return ResponseEntity.badRequest().body(new MessageResponse("Device successfully added!"));
+    }
+
+    @GetMapping(value = "/devices")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Collection<Device>> getDevices(Authentication auth){
+        User userDb = userRespository.findByUsername(auth.getName()).get();
+        Collection<Device> devices = deviceRepository.findByUser(userDb);
+        return new ResponseEntity<>(devices, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/records/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Collection<Record>> getRecordsForDevice(@PathVariable String id){
+        Device device = deviceRepository.findByDeviceId(id);
+        Collection<Record> records= recordRepository.findByDevice(device);
+        return new ResponseEntity<>(records, HttpStatus.OK);
+    }
+
+}
