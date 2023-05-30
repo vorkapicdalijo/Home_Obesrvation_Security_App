@@ -35,6 +35,9 @@ dependencies {
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.5'
 
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
 
 }
 
