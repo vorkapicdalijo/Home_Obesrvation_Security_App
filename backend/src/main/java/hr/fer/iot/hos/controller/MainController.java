@@ -1,5 +1,7 @@
 package hr.fer.iot.hos.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import hr.fer.iot.hos.model.AppNotification;
 import hr.fer.iot.hos.model.Device;
 import hr.fer.iot.hos.model.User;
 import hr.fer.iot.hos.model.payload.DeviceRequest;
@@ -9,6 +11,7 @@ import hr.fer.iot.hos.repository.DeviceRepository;
 import hr.fer.iot.hos.repository.RecordRepository;
 import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FaceDetectionService;
+import hr.fer.iot.hos.service.FirebaseMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
 @RestController
@@ -38,6 +42,9 @@ public class MainController {
 
     @Autowired
     DeviceRepository deviceRepository;
+
+    @Autowired
+    FirebaseMessagingService firebaseMessagingService;
 
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
