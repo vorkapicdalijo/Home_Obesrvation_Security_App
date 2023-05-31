@@ -40,8 +40,6 @@ dependencies {
 
     //db - mysql
     implementation 'mysql:mysql-connector-java'
-
-
 }
 
 tasks.named('test') {
