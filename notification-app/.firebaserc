@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "hosapp-338fb": {
+      "hosting": {
+        "notification-app": [
+          "hosapp-338fb"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "hosapp-338fb"
+  }
+}

@@ -17,6 +17,9 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthGuard } from './authentication/guard/auth.guard';
+import { environment } from '../environments/environment';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireMessagingModule } from "@angular/fire/compat/messaging";
 
 @NgModule({
   declarations: [
@@ -25,7 +28,7 @@ import { AuthGuard } from './authentication/guard/auth.guard';
     RegisterComponent,
     LoginComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +40,9 @@ import { AuthGuard } from './authentication/guard/auth.guard';
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireMessagingModule
   ],
   providers: [
     {
