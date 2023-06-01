@@ -98,6 +98,7 @@ public class AuthController {
         roles.add(userRole);
 
         user.setRoles(roles);
+        user.setFireBaseToken(signUpRequest.getFirebaseToken());
         userRespository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

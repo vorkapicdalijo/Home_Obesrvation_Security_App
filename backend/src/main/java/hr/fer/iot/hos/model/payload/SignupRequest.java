@@ -4,8 +4,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import java.util.Set;
-
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
@@ -23,6 +21,9 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 6, max = 40)
     private String confirmPassword;
+
+    @NotBlank
+    private String firebaseToken;
 
     public String getUsername() {
         return username;
@@ -54,5 +55,13 @@ public class SignupRequest {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public String getFirebaseToken() {
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
     }
 }

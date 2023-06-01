@@ -1,14 +1,15 @@
 package hr.fer.iot.hos.controller;
 
 import hr.fer.iot.hos.model.Device;
+import hr.fer.iot.hos.model.Record;
 import hr.fer.iot.hos.model.User;
 import hr.fer.iot.hos.model.payload.DeviceRequest;
 import hr.fer.iot.hos.model.payload.MessageResponse;
-import hr.fer.iot.hos.model.Record;
 import hr.fer.iot.hos.repository.DeviceRepository;
 import hr.fer.iot.hos.repository.RecordRepository;
 import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FaceDetectionService;
+import hr.fer.iot.hos.service.FirebaseMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
 @RestController
@@ -38,6 +40,9 @@ public class MainController {
 
     @Autowired
     DeviceRepository deviceRepository;
+
+    @Autowired
+    FirebaseMessagingService firebaseMessagingService;
 
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -101,12 +106,22 @@ public class MainController {
         return new ResponseEntity<>(devices, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/device/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Collection<Record>> getRecordsForDevice(@PathVariable String id) {
+        Device device = deviceRepository.findByDeviceId(id);
+        Collection<Record> records = recordRepository.findByDevice(device);
+        return new ResponseEntity<>(records, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/records/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Collection<Record>> getRecordsForDevice(@PathVariable String id){
-        Device device = deviceRepository.findByDeviceId(id);
-        Collection<Record> records= recordRepository.findByDevice(device);
-        return new ResponseEntity<>(records, HttpStatus.OK);
+    public ResponseEntity<?> getRecordForId(@PathVariable Long id) {
+        Optional<Record> record = recordRepository.findById(id);
+        if (record.isPresent())
+            return new ResponseEntity<>(record.get(), HttpStatus.OK);
+        else
+            return ResponseEntity.badRequest().body(new MessageResponse("No record for this id!"));
     }
 
 }

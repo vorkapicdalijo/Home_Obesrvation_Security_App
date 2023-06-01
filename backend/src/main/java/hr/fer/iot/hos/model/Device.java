@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class Device {
 
     @Id
-    @Column(name = "device_id", nullable = false)
+    @Column(name = "device_id", nullable = false, length = 17)
     private String deviceId;
 
     @Column(name = "location", nullable = false)

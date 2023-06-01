@@ -26,8 +26,8 @@ dependencies {
     //security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
-    //db
-    runtimeOnly 'org.postgresql:postgresql'
+    //db - postgresql
+    // runtimeOnly 'org.postgresql:postgresql'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     //jpa
@@ -38,7 +38,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
     implementation 'com.google.firebase:firebase-admin:9.1.1'
 
-
+    //db - mysql
+    implementation 'mysql:mysql-connector-java'
 }
 
 tasks.named('test') {
