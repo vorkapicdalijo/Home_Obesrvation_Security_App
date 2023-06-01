@@ -1,9 +1,0 @@
-{
-  "hosting": [
-    {
-      "target": "notification-app",
-      "source": ".",
-      "frameworksBackend": {}
-    }
-  ]
-}

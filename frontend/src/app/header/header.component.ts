@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../authentication/services/storage.service';
 import { AuthenticationService } from '../authentication/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,8 @@ import { AuthenticationService } from '../authentication/services/authentication
 export class HeaderComponent implements OnInit {
 
   constructor(private storageService: StorageService,
-              private authenticationService: AuthenticationService){
+              private authenticationService: AuthenticationService,
+              private router: Router){
 
   }
 
@@ -28,6 +30,10 @@ export class HeaderComponent implements OnInit {
         this.storageService.logoutUser();
         window.location.reload()
       })
+  }
+
+  returnToHome() {
+    this.router.navigate(['/home'])
   }
 
 }

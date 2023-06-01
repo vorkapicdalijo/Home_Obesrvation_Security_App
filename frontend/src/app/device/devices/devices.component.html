@@ -1,0 +1,75 @@
+<div class="w-100 h-75 my-5 px-5">
+  <div class="mt-5 mx-auto d-flex flex-column w-50">
+    <h2 class="text-center mb-5">Popis uređaja</h2>
+    <button mat-raised-button
+            color="primary"
+            class="mx-auto  mb-5"
+            (click)="showForm()">
+      DODAJ NOVI UREĐAJ
+    </button>
+    <ng-container *ngIf="formVisible">
+      <form [formGroup]="deviceForm"
+            (ngSubmit)="onSubmit()">
+        <div class="mx-auto d-flex flex-column justify-content-center align-items-center">
+          <div>
+            <mat-form-field appearance="outline"
+                            class="col me-2">
+              <mat-label>
+                ID UREĐAJA:
+              </mat-label>
+              <input matInput
+                    type="text"
+                    formControlName="deviceId">
+            </mat-form-field>
+            <mat-form-field appearance="outline"
+                            class="col ms-2">
+              <mat-label>
+                LOKACIJA:
+              </mat-label>
+              <input matInput
+                    type="text"
+                    formControlName="location">
+            </mat-form-field>
+          </div>
+          <button mat-raised-button
+                  type="submit" class="py-3 mb-5" [disabled]="!deviceForm.valid">DODAJ</button>
+        </div>
+      </form>
+    </ng-container>
+
+    <div class="w-100 mx-auto">
+      <mat-table [dataSource]="dataSource"
+                 class="mat-elevation-z2 w-100">
+        <ng-container matColumnDef="deviceId">
+          <mat-header-cell *matHeaderCellDef>
+            ID UREĐAJA
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.deviceId}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="location">
+          <mat-header-cell *matHeaderCellDef>
+            LOKACIJA
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.location}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="timestamp">
+          <mat-header-cell *matHeaderCellDef>
+            VRIJEME DODAVANJA
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element.timestamp}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions"
+                      justify="end">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let element"
+                    class="float-end">
+            <!-- <button class="p-0 ms-1 btn btn-danger px-3">
+              <i class="las la-trash-alt la-md"></i>
+            </button> -->
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>

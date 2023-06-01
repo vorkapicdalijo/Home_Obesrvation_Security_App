@@ -1,0 +1,7 @@
+.mat-cell:last-child, .mat-header-cell:last-child {
+  justify-content: flex-end;
+}
+
+.mat-row:hover {
+  background-color: #f2f2f2;
+}
