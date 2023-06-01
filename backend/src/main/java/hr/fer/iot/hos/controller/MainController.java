@@ -108,8 +108,12 @@ public class MainController {
 
     @GetMapping(value = "/device/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Collection<Record>> getRecordsForDevice(@PathVariable String id) {
+    public ResponseEntity<?> getRecordsForDevice(@PathVariable String id, Authentication auth) {
         Device device = deviceRepository.findByDeviceId(id);
+        User userDb = userRespository.findByUsername(auth.getName()).get();
+        if (!userDb.getUsername().equals(device.getUser().getUsername())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Access denied!"));
+        }
         Collection<Record> records = recordRepository.findByDevice(device);
         for (Record r : records) {
             r.setImageDisplay(Base64.getEncoder().encodeToString(r.getImage()));
@@ -119,13 +123,17 @@ public class MainController {
 
     @GetMapping(value = "/records/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> getRecordForId(@PathVariable Long id) {
+    public ResponseEntity<?> getRecordForId(@PathVariable Long id, Authentication auth) {
         Optional<Record> record = recordRepository.findById(id);
+        User userDb = userRespository.findByUsername(auth.getName()).get();
         if (record.isPresent()) {
+            if (!userDb.getUsername().equals(record.get().getUser().getUsername())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Access denied!"));
+            }
             record.get().setImageDisplay(Base64.getEncoder().encodeToString(record.get().getImage()));
             return new ResponseEntity<>(record.get(), HttpStatus.OK);
         } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("No record for this id!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("No record!"));
         }
     }
 
