@@ -17,6 +17,10 @@ export class StorageService {
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
+  public saveToken(token: string) {
+    window.sessionStorage.setItem('notificationToken', token);
+  }
+
   public getUser(): any {
     const user = window.sessionStorage.getItem(USER_KEY);
     if (user) {

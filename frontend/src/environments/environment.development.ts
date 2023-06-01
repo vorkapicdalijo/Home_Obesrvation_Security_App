@@ -9,6 +9,7 @@ export const environment = {
     vapidKey: 'BCd3GR4pQ3u5bSwNvwZevVWsNwszq58aDgF8SYtpr7rE8fLaQSR-Hg0XKiu94rvhh1nj5jDwfUDLBpXeyH3wAvM'
   },
 
-  localApiUrl: 'http://localhost:8080/api/',
+  //localApiUrl: 'http://localhost:8080/api/',
+  localApiUrl: 'https://hos-deploy.onrender.com/api/'
 
 };

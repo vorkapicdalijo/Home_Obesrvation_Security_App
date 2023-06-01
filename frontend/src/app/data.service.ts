@@ -22,6 +22,13 @@ export class DataService {
     ).pipe(res => res as any || null);
   }
 
+  public getRecordById(id: number): Observable<any> {
+    return this.http.get(
+      environment.localApiUrl + `main/records/${id}`,
+      httpOptions
+    ).pipe(res => res as any || null);
+  }
+
   public getDevices(): Observable<any> {
     return this.http.get(
       environment.localApiUrl + 'main/devices',
