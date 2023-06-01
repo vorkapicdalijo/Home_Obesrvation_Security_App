@@ -111,6 +111,9 @@ public class MainController {
     public ResponseEntity<Collection<Record>> getRecordsForDevice(@PathVariable String id) {
         Device device = deviceRepository.findByDeviceId(id);
         Collection<Record> records = recordRepository.findByDevice(device);
+        for (Record r : records) {
+            r.setImageDisplay(Base64.getEncoder().encodeToString(r.getImage()));
+        }
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 
@@ -118,10 +121,12 @@ public class MainController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> getRecordForId(@PathVariable Long id) {
         Optional<Record> record = recordRepository.findById(id);
-        if (record.isPresent())
+        if (record.isPresent()) {
+            record.get().setImageDisplay(Base64.getEncoder().encodeToString(record.get().getImage()));
             return new ResponseEntity<>(record.get(), HttpStatus.OK);
-        else
+        } else {
             return ResponseEntity.badRequest().body(new MessageResponse("No record for this id!"));
+        }
     }
 
 }
