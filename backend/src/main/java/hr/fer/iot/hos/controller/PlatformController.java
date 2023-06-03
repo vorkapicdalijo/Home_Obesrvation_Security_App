@@ -35,13 +35,15 @@ public class PlatformController {
     private DeviceRepository deviceRepository;
 
     private void sendAlarm(String firebaseToken, String id) {
-        String content = " http://localhost:4200/records/".concat(id);
+        String redirectLink = "http://localhost:4200/records/".concat(id);
+        String content = "Someone is on your property!";
         String ATTENTION_LINK = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Attention_Sign.svg/2302px-Attention_Sign.svg.png";
         AppNotification note = new AppNotification("ALARM", content, ATTENTION_LINK);
         try {
-            firebaseMessagingService.sendNotificationToken(note, firebaseToken);
+            logger.info("Notifcation is about to be sent to {}", firebaseToken);
+            firebaseMessagingService.sendNotificationToken(note, firebaseToken, redirectLink);
         } catch (FirebaseMessagingException e) {
-            logger.error("Error while sending firebase alarm");
+            logger.error("Error while sending firebase alarm {}", e.getMessage(), e);
         }
     }
 
@@ -61,10 +63,11 @@ public class PlatformController {
             User userDb = device.getUser();
             record.setUser(userDb);
             record.setImage(bytes);
-            record.setTimestamp(new Timestamp(timestamp));
+            Timestamp timestampDb = new Timestamp(timestamp);
+            record.setTimestamp(timestampDb);
             record.setDevice(device);
             recordRepository.save(record);
-            sendAlarm(userDb.getFireBaseToken(), String.valueOf(userDb.getId()));
+            sendAlarm(userDb.getFireBaseToken(), String.valueOf(record.getId()));
             return ResponseEntity.ok(new MessageResponse("Image uploaded!"));
         }
 
