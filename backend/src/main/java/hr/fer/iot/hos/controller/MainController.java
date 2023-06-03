@@ -16,16 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/main")
 public class MainController {
@@ -53,34 +51,6 @@ public class MainController {
     }
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @PostMapping(value = "/image")
-    public ResponseEntity<?> postImage(@RequestParam("file") MultipartFile file, @RequestParam("device") String deviceId, Authentication auth) {
-
-        byte[] bytes = null;
-        try {
-            bytes = faceDetectionService.detectFaceApi(file.getBytes()).toImage();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Record record = new Record();
-        if(userRespository.existsByUsername(auth.getName())){
-            User userDb = userRespository.findByUsername(auth.getName()).get();
-            Device device = deviceRepository.findByDeviceId(deviceId);
-            record.setUser(userDb);
-            record.setImage(bytes);
-            record.setImageDisplay(Base64.getEncoder().encodeToString(bytes));
-            record.setTimestamp(new Timestamp(System.currentTimeMillis()));
-            record.setDevice(device);
-            recordRepository.save(record);
-            return ResponseEntity.ok(new MessageResponse("Face detection finished!"));
-        }
-
-        return ResponseEntity.ok(new MessageResponse("Error occured!"));
-
-    }
-
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = "/addDevice")
     public ResponseEntity<?> addDevice(Authentication auth, @Valid @RequestBody DeviceRequest deviceRequest){
         if (deviceRepository.existsByDeviceId(deviceRequest.getDeviceId())) {
@@ -95,7 +65,7 @@ public class MainController {
                 userDb
         );
         deviceRepository.save(device);
-        return ResponseEntity.badRequest().body(new MessageResponse("Device successfully added!"));
+        return ResponseEntity.ok(new MessageResponse("Device successfully added!"));
     }
 
     @GetMapping(value = "/devices")

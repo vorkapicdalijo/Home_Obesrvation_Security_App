@@ -27,9 +27,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
     //db - postgresql
-    // runtimeOnly 'org.postgresql:postgresql'
-    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    runtimeOnly 'org.postgresql:postgresql'
+
     //jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -39,7 +38,17 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.1.1'
 
     //db - mysql
-    implementation 'mysql:mysql-connector-java'
+    //implementation 'mysql:mysql-connector-java'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 }
 
 tasks.named('test') {
