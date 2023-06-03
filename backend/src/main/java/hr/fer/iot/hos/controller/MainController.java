@@ -5,17 +5,22 @@ import hr.fer.iot.hos.model.Record;
 import hr.fer.iot.hos.model.User;
 import hr.fer.iot.hos.model.payload.DeviceRequest;
 import hr.fer.iot.hos.model.payload.MessageResponse;
+import hr.fer.iot.hos.model.payload.PlatformRequest;
 import hr.fer.iot.hos.repository.DeviceRepository;
 import hr.fer.iot.hos.repository.RecordRepository;
 import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FaceDetectionService;
 import hr.fer.iot.hos.service.FirebaseMessagingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -29,6 +34,7 @@ import java.util.Optional;
 @RequestMapping("/api/main")
 public class MainController {
 
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
     @Autowired
     FaceDetectionService faceDetectionService;
 
@@ -43,9 +49,12 @@ public class MainController {
     @Autowired
     FirebaseMessagingService firebaseMessagingService;
 
+    @Value("${backend.app.platformPostUrl}")
+    String url;
+
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Collection<Record>> getRecords(Authentication auth){
+    public ResponseEntity<Collection<Record>> getRecords(Authentication auth) {
         User userDb = userRespository.findByUsername(auth.getName()).get();
         Collection<Record> records = recordRepository.findByUser(userDb);
         for (Record r : records) {
@@ -54,9 +63,24 @@ public class MainController {
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 
+    private void postDeviceDataToPlatform(String deviceId, Long userId) {
+        RestTemplate restTemplate = new RestTemplate();
+        PlatformRequest request = new PlatformRequest(deviceId, String.valueOf(userId));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<PlatformRequest> httpEntity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<String> result = restTemplate.postForEntity(url, httpEntity, String.class);
+
+        logger.info(String.valueOf(result.getStatusCodeValue()));
+        logger.info(result.getBody());
+    }
+
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = "/addDevice")
-    public ResponseEntity<?> addDevice(Authentication auth, @Valid @RequestBody DeviceRequest deviceRequest){
+    public ResponseEntity<?> addDevice(Authentication auth, @Valid @RequestBody DeviceRequest deviceRequest) {
         if (deviceRepository.existsByDeviceId(deviceRequest.getDeviceId())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: device ID is already in use!"));
         }
@@ -69,6 +93,11 @@ public class MainController {
                 userDb
         );
         deviceRepository.save(device);
+        try {
+            postDeviceDataToPlatform(device.getDeviceId(), device.getUser().getId());
+        } catch (RestClientException e) {
+            logger.error("Error while uploading data to platform {}", e.getMessage(), e);
+        }
 
         return ResponseEntity.ok(new MessageResponse("Device successfully added!"));
     }
