@@ -1,7 +1,6 @@
 package hr.fer.iot.hos.model;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.sql.Timestamp;
 
 @Entity

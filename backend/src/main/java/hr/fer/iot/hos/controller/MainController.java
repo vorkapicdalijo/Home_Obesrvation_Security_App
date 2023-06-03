@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.Base64;
@@ -68,12 +69,36 @@ public class MainController {
                 userDb
         );
         deviceRepository.save(device);
+
         return ResponseEntity.ok(new MessageResponse("Device successfully added!"));
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @DeleteMapping("/deleteDevice")
+    @Transactional
+    public ResponseEntity<?> deleteDevice(@RequestParam("device_id") String id) {
+        if (deviceRepository.existsByDeviceId(id)) {
+            recordRepository.deleteRecordsByDeviceId(id);
+            deviceRepository.deleteById(id);
+            return ResponseEntity.ok(new MessageResponse("Device successfully deleted!"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Device with this ID not found");
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @DeleteMapping("/deleteRecord/{id}")
+    public ResponseEntity<?> deleteRecord(@PathVariable Long id) {
+        if (recordRepository.existsById(id)) {
+            recordRepository.deleteById(id);
+            return ResponseEntity.ok(new MessageResponse("Record deleted"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record with this ID not found");
+    }
+
+
     @GetMapping(value = "/devices")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Collection<Device>> getDevices(Authentication auth){
+    public ResponseEntity<Collection<Device>> getDevices(Authentication auth) {
         User userDb = userRespository.findByUsername(auth.getName()).get();
         Collection<Device> devices = deviceRepository.findByUser(userDb);
         return new ResponseEntity<>(devices, HttpStatus.OK);
