@@ -47,6 +47,9 @@ public class MainController {
     public ResponseEntity<Collection<Record>> getRecords(Authentication auth){
         User userDb = userRespository.findByUsername(auth.getName()).get();
         Collection<Record> records = recordRepository.findByUser(userDb);
+        for (Record r : records) {
+            r.setImageDisplay(Base64.getEncoder().encodeToString(r.getImage()));
+        }
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 

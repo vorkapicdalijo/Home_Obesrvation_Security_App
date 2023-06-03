@@ -6,21 +6,18 @@ import hr.fer.iot.hos.model.Device;
 import hr.fer.iot.hos.model.Record;
 import hr.fer.iot.hos.model.User;
 import hr.fer.iot.hos.model.payload.MessageResponse;
-import hr.fer.iot.hos.model.payload.PlatformRequest;
 import hr.fer.iot.hos.repository.DeviceRepository;
 import hr.fer.iot.hos.repository.RecordRepository;
-import hr.fer.iot.hos.repository.UserRespository;
 import hr.fer.iot.hos.service.FirebaseMessagingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Base64;
 
 @RestController
 @RequestMapping("/api/platform")
@@ -33,9 +30,6 @@ public class PlatformController {
 
     @Autowired
     private RecordRepository recordRepository;
-
-    @Autowired
-    private UserRespository userRespository;
 
     @Autowired
     private DeviceRepository deviceRepository;
@@ -51,25 +45,23 @@ public class PlatformController {
         }
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping(value = "/alarm")
-    public ResponseEntity<?> postImage(@RequestBody PlatformRequest platformRequest) {
+    public ResponseEntity<?> postImage(@RequestParam("file") MultipartFile file, @RequestParam("device_id") String deviceId, @RequestParam("timestamp") Long timestamp) {
 
         byte[] bytes = null;
         try {
-            bytes = platformRequest.getFile().getBytes();
+            bytes = file.getBytes();
         } catch (IOException e) {
             logger.error("while processing image", e);
         }
 
         Record record = new Record();
-        Device device = deviceRepository.findByDeviceId(platformRequest.getDeviceId());
+        Device device = deviceRepository.findByDeviceId(deviceId);
         if (device != null) {
             User userDb = device.getUser();
             record.setUser(userDb);
             record.setImage(bytes);
-            record.setImageDisplay(Base64.getEncoder().encodeToString(bytes));
-            record.setTimestamp(Timestamp.valueOf(platformRequest.getTimestamp()));
+            record.setTimestamp(new Timestamp(timestamp));
             record.setDevice(device);
             recordRepository.save(record);
             sendAlarm(userDb.getFireBaseToken(), String.valueOf(userDb.getId()));
