@@ -9,6 +9,7 @@ import hr.fer.iot.hos.model.payload.PlatformRequest;
 import hr.fer.iot.hos.repository.DeviceRepository;
 import hr.fer.iot.hos.repository.RecordRepository;
 import hr.fer.iot.hos.repository.UserRespository;
+import hr.fer.iot.hos.security.notsecurity.TrustAllClientHttpRequestFactory;
 import hr.fer.iot.hos.service.FaceDetectionService;
 import hr.fer.iot.hos.service.FirebaseMessagingService;
 import org.slf4j.Logger;
@@ -52,6 +53,9 @@ public class MainController {
     @Value("${backend.app.platformPostUrl}")
     String url;
 
+    @Value("${backend.app.truststore.password}")
+    String truststorePassword;
+
     @GetMapping(value = "/records")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Collection<Record>> getRecords(Authentication auth) {
@@ -64,7 +68,28 @@ public class MainController {
     }
 
     private void postDeviceDataToPlatform(String deviceId, Long userId) {
-        RestTemplate restTemplate = new RestTemplate();
+//            Add truststore with selfsigned cert to trust
+//            InputStream trustSotreFile = new ClassPathResource("certs/truststore.jks").getInputStream();
+//            KeyStore truststore = KeyStore.getInstance(KeyStore.getDefaultType());
+//            truststore.load(trustSotreFile, truststorePassword.toCharArray());
+//
+//            // Create a TrustManagerFactory using the truststore
+//            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//            trustManagerFactory.init(truststore);
+//
+//            // Create an SSLContext and initialize it with the TrustManagerFactory
+//            SSLContext sslContext = SSLContext.getInstance("TLS");
+//            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+//
+//            // Configure the RestTemplate to use the custom SSLContext
+//            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+//            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+//            requestFactory.setConnectTimeout(5000);
+//            requestFactory.setReadTimeout(5000);
+
+        // In this mode now app trust all certs - this is not good but my colleagues are lazy to upload valid cert,
+        // or properly generated selfsigned cert :(
+        RestTemplate restTemplate = new RestTemplate(new TrustAllClientHttpRequestFactory());
         PlatformRequest request = new PlatformRequest(deviceId, String.valueOf(userId));
 
         HttpHeaders headers = new HttpHeaders();

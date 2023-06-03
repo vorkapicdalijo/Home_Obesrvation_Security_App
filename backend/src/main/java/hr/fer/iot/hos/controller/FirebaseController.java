@@ -19,7 +19,7 @@ public class FirebaseController {
     @ResponseBody
     public String sendNotificationToken(@RequestBody AppNotification note,
                                    @RequestParam("token") String token) throws FirebaseMessagingException {
-        return firebaseMessagingService.sendNotificationToken(note, token);
+        return firebaseMessagingService.sendNotificationToken(note, token, "LINK_MOCK");
     }
 
     @RequestMapping("/send-notification/topic")
