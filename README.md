@@ -35,10 +35,4 @@ Contributions are welcome! If you have any ideas or suggestions to enhance this 
 
 ## License
 
-This project is licensed under the [MIT License](link-to-your-license-file).
-
-Enjoy a secure and reliable home security system powered by cutting-edge technology!
-
-[Add any relevant badges or shields here, such as build status, version, etc.]
-
-Feel free to customize this README to your liking and add any additional sections or information that you find relevant.
+This project is licensed under the [MIT License](LICENSE).
