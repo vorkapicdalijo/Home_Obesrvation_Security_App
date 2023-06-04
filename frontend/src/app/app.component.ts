@@ -12,7 +12,7 @@ import { StorageService } from './authentication/services/storage.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'frontend';
+  title = 'Home Observation Systems';
 
   message: any = null;
 
@@ -55,7 +55,6 @@ export class AppComponent implements OnInit {
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
       this.message=payload;
-      window.location.assign(payload.notification?.title ||'')
     });
   }
 }

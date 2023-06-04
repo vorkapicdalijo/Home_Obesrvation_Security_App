@@ -1,9 +1,9 @@
 {
-  "name": "frontend",
+  "name": "Home Observation Systems",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration production",
+    "start": "ng serve",
     "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

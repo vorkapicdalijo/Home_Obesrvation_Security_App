@@ -22,6 +22,8 @@ export class LoginComponent implements OnInit {
   loginSubmitted: boolean = false;
   errorMessage: string = '';
 
+  isLoading: boolean = false;
+
   constructor(private fb: FormBuilder,
               private authenticationService: AuthenticationService,
               private storageService: StorageService,
@@ -30,12 +32,12 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.compose(
-        [Validators.minLength(6), Validators.required])),
+      password: new FormControl('', Validators.required),
     });
   }
 
   public onSubmit(): void {
+    this.isLoading = true;
     let username = this.loginForm.get('username')?.value;
     let password = this.loginForm.get('password')?.value;
 
@@ -44,16 +46,15 @@ export class LoginComponent implements OnInit {
     this.authenticationService.loginUser(username, password)
       .subscribe({
         next: response => {
-          
           this.storageService.saveUser(response);
-          console.log(response);
+          this.isLoading = false;
           this.loginSuccessful = true;
           this.router.navigate(['/home'])
         },
         error: error => {
+          this.isLoading = false;
           this.loginFailed = true;
           this.errorMessage = error.error.message;
-
         }
       })
   }

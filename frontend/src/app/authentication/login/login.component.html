@@ -25,6 +25,9 @@
       <div>
         <button mat-raised-button type="submit" color="primary" [disabled]="!loginForm.valid">Prijava</button>
       </div>
+      <div *ngIf="isLoading">
+        <img src="../../../assets/Radio-1s-200px.svg" class="spinner mt-5">
+      </div>
 
       <div class="alert alert-warning mt-5" *ngIf="loginSubmitted && loginFailed">
         Login failed!<br />{{ errorMessage }}

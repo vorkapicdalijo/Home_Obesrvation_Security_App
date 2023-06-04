@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
   registrationFailed: boolean = false;
   registrationSubmitted: boolean = false;
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(private fb: FormBuilder,
               private authenticationService: AuthenticationService,
@@ -36,6 +37,7 @@ export class RegisterComponent implements OnInit {
   }
 
   public onSubmit(): void {
+    this.isLoading = true;
     let username = this.registrationForm.get('username')?.value;
     let email = this.registrationForm.get('email')?.value;
     let password = this.registrationForm.get('password')?.value;
@@ -46,11 +48,12 @@ export class RegisterComponent implements OnInit {
     this.authenticationService.registerUser(username, email, password, confirmPassword)
       .subscribe({
         next: response => {
-          console.log(response);
+          this.isLoading = false;
           this.registrationSuccessful = true;
           this.router.navigate(['/home']);
         },
         error: error => {
+          this.isLoading = false;
           this.registrationFailed = true;
           this.errorMessage = error.error.message;
 
