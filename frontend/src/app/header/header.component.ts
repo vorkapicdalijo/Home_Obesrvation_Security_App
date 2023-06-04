@@ -25,11 +25,8 @@ export class HeaderComponent implements OnInit {
   }
 
   public logout() {
-    this.authenticationService.logoutUser()
-      .subscribe(res => {
-        this.storageService.logoutUser();
-        window.location.reload()
-      })
+    this.storageService.logoutUser();
+    window.location.reload()
   }
 
   returnToHome() {

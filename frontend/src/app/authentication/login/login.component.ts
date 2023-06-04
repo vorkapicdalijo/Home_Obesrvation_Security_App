@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService.loginUser(username, password)
       .subscribe({
         next: response => {
+          
           this.storageService.saveUser(response);
           console.log(response);
           this.loginSuccessful = true;

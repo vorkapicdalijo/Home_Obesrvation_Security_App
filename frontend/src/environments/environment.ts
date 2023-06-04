@@ -10,5 +10,5 @@ export const environment = {
   },
 
   //localApiUrl: 'http://localhost:8080/api/',
-  localApiUrl: 'https://hos-deploy.onrender.com/api/'
+  localApiUrl: 'https://hos-api.onrender.com/api/'
 };

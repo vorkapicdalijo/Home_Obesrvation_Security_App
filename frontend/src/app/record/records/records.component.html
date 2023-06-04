@@ -1,1 +1,68 @@
-<p>records works!</p>
+<div class="mt-5 px-md-5 w-100">
+  <div class="mx-auto" *ngIf="!isLoading; else loading">
+    <form [formGroup]="deviceForm"
+          (ngSubmit)="getRecordsForDevice()">
+      <h5 class="ms-4 mb-3 fw-light">Filtriraj zapise po uređaju:</h5>
+      <div class="d-flex flex-column justify-content-start align-items-start ms-4">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Uređaj</mat-label>
+          <mat-select formControlName="deviceFormControl">
+            <mat-option [value]="device.deviceId + ', ' + device.location"
+                        *ngFor="let device of devices">{{device.deviceId + ", " + device.location}}</mat-option>
+          </mat-select>
+          <button matSuffix
+                  mat-icon-button
+                  aria-label="Clear"
+                  *ngIf="currentDevice"
+                  matTooltip="Poništi filter"
+                  (click)="clearFilter()">
+            <i class="las la-times-circle"></i>
+          </button>
+        </mat-form-field>
+        <button mat-raised-button
+                type="submit"
+                color="primary"
+                [disabled]="!deviceForm.valid">PREGLEDAJ ZAPISE</button>
+        <div [hidden]="!currentDevice"
+             class="mt-3">
+          <span>Trenutni uređaj:</span>
+          <h5>{{currentDevice}}</h5>
+        </div>
+      </div>
+    </form>
+    <div class="row row-cols-4 mx-auto justify-content-center"
+         *ngIf="records.length > 0; else noData">
+      <mat-card class="card col my-4 mx-3"
+                *ngFor="let record of records">
+        <mat-card-header>
+          <mat-card-subtitle>Vrijeme:</mat-card-subtitle>
+          <mat-card-title class="mb-2">{{getTimestamp(record.timestamp)}}</mat-card-title>
+          <mat-card-subtitle class="mb-2">Lokacija: <span style="color:black">{{record.device.location}}</span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <img [src]="'data:image/jpeg;base64,'+record.imageDisplay"
+             class="record"
+             width="100%">
+        <mat-card-actions class="mt-1">
+          <button mat-button
+                  color="primary"
+                  (click)="openRecordDetails(record.id)">DETALJI</button>
+          <button mat-button
+                  color="warn"
+                  (click)="removeRecord(record.id)">OBRIŠI</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<ng-template #noData>
+  <h1 class="ms-4 mt-5 text-center">NEMA ZAPISA !</h1>
+</ng-template>
+
+<ng-template #loading>
+  <div class="mt-5 pt-5">
+    <img src="../../../assets/Radio-1s-200px.svg" class="spinner mt-5">
+  </div>
+</ng-template>

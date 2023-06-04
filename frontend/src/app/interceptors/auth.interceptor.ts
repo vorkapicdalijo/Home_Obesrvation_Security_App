@@ -6,10 +6,13 @@ import { Observable } from 'rxjs';
 export class HttpRequestInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     //if(!req.url.includes("login") && !req.url.includes("logout") && !req.url.includes("signup")) {
-    req = req.clone({
-      withCredentials: true
-    });
-    //}
+    const user = JSON.parse(window.sessionStorage.getItem('auth-user') || '{}');
+    const token = user.accessToken
+    if(token) {
+      req = req.clone({
+        headers: req.headers.set("Authorization", "Bearer "+token)
+      });
+    }
 
     return next.handle(req);
   }

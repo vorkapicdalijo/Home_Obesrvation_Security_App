@@ -1,1 +1,36 @@
-<img [src]="imgPath">
+<div class="container-lg w-100 my-5"
+     *ngIf="!isLoading; else loading">
+  <div class="record-container px-md-5 mb-5 mx-auto d-flex flex-column justify-content-center align-items-center">
+    <div class="w-100">
+      <i type="button"
+         matTooltip="Povratak"
+         class="float-end las la-times-circle la-lg mt-4 me-3"
+         (click)="returnToRecords()"></i>
+    </div>
+    <h2>DETEKTIRAN POKRET !</h2>
+    <div class="mt-4 mb-4 d-flex flex-column">
+      <div>
+        <span>Vrijeme:</span>
+        <h4>{{timestamp}}</h4>
+      </div>
+      <div>
+        <span>ID Uređaja:</span>
+        <h4>{{record.device.deviceId}}</h4>
+      </div>
+      <div>
+        <span>Lokacija:</span>
+        <h4>{{record.device.location}}</h4>
+      </div>
+    </div>
+    <img [src]="'data:image/jpeg;base64,'+record.imageDisplay"
+         class="record"
+         width="100%">
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="mt-5 pt-5">
+    <img src="../../../assets/Radio-1s-200px.svg"
+         class="spinner mt-5">
+  </div>
+</ng-template>

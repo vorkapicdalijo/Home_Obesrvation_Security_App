@@ -24,6 +24,12 @@ import { initializeApp } from "firebase/app";
 import { RecordsComponent } from './record/records/records.component';
 import { RecordDetailsComponent } from './record/record-details/record-details.component';
 import { DevicesComponent } from './device/devices/devices.component';
+import {MatCardModule} from '@angular/material/card';
+import {MatSelectModule} from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { JwtModule } from '@auth0/angular-jwt';
+import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 initializeApp(environment.FirebaseConfig)
 
@@ -38,6 +44,7 @@ initializeApp(environment.FirebaseConfig)
     RecordsComponent,
     RecordDetailsComponent,
     DevicesComponent,
+    WarningDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +58,11 @@ initializeApp(environment.FirebaseConfig)
     MatFormFieldModule,
     MatTableModule,
     AppRoutingModule,
+    MatCardModule,
+    MatSelectModule,
+    JwtModule,
+    MatTooltipModule,
+    MatDialogModule
   ],
   providers: [
     {

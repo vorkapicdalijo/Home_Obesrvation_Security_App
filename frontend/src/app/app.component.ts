@@ -32,21 +32,7 @@ export class AppComponent implements OnInit {
      { vapidKey: environment.FirebaseConfig.vapidKey}).then(
        (currentToken) => {
          if (currentToken) {
-           console.log(currentToken);
            this.sessionStorage.saveToken(currentToken);
-
-          //  this.http.post('http://localhost:8080/api/firebase/send-notification/token',
-          //   {
-          //     title: 'test',
-          //     content: 'content',
-          //     image: 'slika'
-          //   },
-          //   {
-          //     params: {
-          //       token: currentToken
-          //     }
-          //   }
-          //  ).subscribe(() => {  });
 
          } else {
            console.log('No registration token available. Request permission to generate one.');
@@ -62,6 +48,7 @@ export class AppComponent implements OnInit {
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
       this.message=payload;
+      window.location.assign(payload.notification?.title ||'')
     });
   }
 }

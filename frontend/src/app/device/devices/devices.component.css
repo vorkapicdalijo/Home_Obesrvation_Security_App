@@ -1,7 +1,18 @@
 .mat-cell:last-child, .mat-header-cell:last-child {
-  justify-content: flex-end;
+  justify-content: flex-end !important;
+  padding-right: 0px !important;
+}
+
+.mat-column-actions {
+  justify-content: flex-end !important;
+  padding-right: 10px !important;
 }
 
 .mat-row:hover {
   background-color: #f2f2f2;
+}
+
+.spinner {
+  margin: auto;
+  display: block;
 }

@@ -1,16 +1,8 @@
-<div class="w-100 h-75 my-5 px-5">
-  <div class="mt-5 mx-auto my-auto d-flex flex-column justify-content-center align-items-between w-50 h-75">
-    <button mat-raised-button
-            class="py-5 mb-1"
-            color="primary"
-            (click)="openRecords()">
-      <span class="fs-5">ARHIVA</span>
-    </button>
-    <button mat-raised-button
-            class="py-5"
-            color="primary"
-            (click)="openDevices()">
-      <span class="fs-5">REGISTRIRANI UREĐAJI</span>
-    </button>
-  </div>
+<div class="title w-100 row row-cols-1 d-flex flex-column justify-content-center m-0 m-lg-5 p-lg-5 pt-5">
+  <button mat-raised-button color="primary" (click)="openRecords()" class="home-item mx-auto col py-5 mt-5">
+    <h2 class="py-5">ARHIVA ZAPISA</h2>
+  </button>
+  <button mat-raised-button color="primary" (click)="openDevices()" class="home-item mx-auto col py-5">
+    <h2 class="py-5">REGISTRIRANI UREĐAJI</h2>
+  </button>
 </div>

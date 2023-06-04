@@ -8,6 +8,10 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { WarningDialogComponent } from 'src/app/warning-dialog/warning-dialog.component';
+import { StorageService } from 'src/app/authentication/services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-devices',
@@ -23,9 +27,13 @@ export class DevicesComponent implements OnInit {
   formVisible: boolean = false;
 
   deviceForm!: FormGroup;
+  isLoading: boolean = true;
 
   constructor(private service: DataService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              public dialog: MatDialog,
+              private storageService: StorageService,
+              private router: Router) {
 
   }
 
@@ -39,27 +47,48 @@ export class DevicesComponent implements OnInit {
   }
 
   loadDevices() {
+    this.isLoading = true;
     this.service.getDevices()
       .subscribe(devices => {
         this.dataSource = new MatTableDataSource<Device>(devices);
         this.devices = devices;
+        this.isLoading = false;
       })
   }
 
   onSubmit() {
     let deviceId = this.deviceForm.get('deviceId')?.value;
     let location = this.deviceForm.get('location')?.value;
-    //let timestamp = new Date().getTime().toString();
     this.service.addDevice(deviceId, location).subscribe(
       res => {
-        console.log(res)
-        window.location.reload();
-      },
-      error => {
-        console.log(error)
-        window.location.reload();
+        this.loadDevices();
       }
     )
+  }
+
+  removeDevice(id: string) {
+        
+    const dialogRef = this.dialog.open(WarningDialogComponent,
+      {
+        position: {top: '30px'},
+        data: {
+          id: id,
+          type: 'device'
+        }
+      })
+
+    dialogRef.afterClosed().subscribe(res => {
+      if(res) {
+        this.service.deleteDevice(id)
+          .subscribe(res => {
+            this.loadDevices();
+          });
+      }
+    });
+  }
+
+  isUniqueId() {
+    return this.devices.filter(device => {return device.deviceId.toLowerCase() == this.deviceForm.get('deviceId')?.value.toLowerCase()}).length == 0
   }
 
   showForm() {

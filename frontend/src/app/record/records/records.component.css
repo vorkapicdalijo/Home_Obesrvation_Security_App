@@ -1,0 +1,14 @@
+
+.card {
+  width: 400px;
+  max-width: 400px;
+}
+
+.record {
+  background-size: cover;
+}
+
+.spinner {
+  margin: auto;
+  display: block;
+}
