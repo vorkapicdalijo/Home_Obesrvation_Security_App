@@ -21,8 +21,15 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.checkAuthExpiration();
     this.requestPermission();
     this.listen();
+  }
+
+  checkAuthExpiration() {
+    if(this.sessionStorage.isLoggedIn()) {
+      this.sessionStorage.getExpirationTimeout()
+    }
   }
 
   requestPermission() {

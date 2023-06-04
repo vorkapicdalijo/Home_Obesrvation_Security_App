@@ -32,11 +32,19 @@ export class StorageService {
     window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
+  getExpirationTimeout() {
+    const user = JSON.parse(window.sessionStorage.getItem(USER_KEY) || '{}');
+    const helper = new JwtHelperService();
+
+    const expirationDate = helper.getTokenExpirationDate(user.accessToken);
+
+
+    let timeout = helper.getTokenExpirationDate(user.accessToken)!.valueOf() - new Date().valueOf();
+
+    this.expirationCounter(timeout);
+  }
+
   expirationCounter(timeout: any) {
-    // of(null).pipe(delay(timeout)).subscribe((expired) => {
-    //   this.logoutUser();
-    //   window.location.reload()
-    // });
     setTimeout(() => {
       this.logoutUser()
       window.location.reload()
