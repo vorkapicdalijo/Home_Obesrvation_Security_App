@@ -36,6 +36,7 @@ public class PlatformController {
 
     private void sendAlarm(String firebaseToken, String id) {
         String redirectLink = "http://localhost:4200/records/".concat(id);
+        logger.info(redirectLink);
         String content = "Someone is on your property!";
         String ATTENTION_LINK = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Attention_Sign.svg/2302px-Attention_Sign.svg.png";
         AppNotification note = new AppNotification("ALARM", content, ATTENTION_LINK);
