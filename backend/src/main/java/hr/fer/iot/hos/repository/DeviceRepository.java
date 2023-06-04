@@ -5,9 +5,8 @@ import hr.fer.iot.hos.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
-public interface DeviceRepository extends JpaRepository<Device, Long>{
+public interface DeviceRepository extends JpaRepository<Device, String> {
 
     /**
      * Returns all devices associated with the given user

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/firebase")
 public class FirebaseController {
@@ -19,7 +19,7 @@ public class FirebaseController {
     @ResponseBody
     public String sendNotificationToken(@RequestBody AppNotification note,
                                    @RequestParam("token") String token) throws FirebaseMessagingException {
-        return firebaseMessagingService.sendNotificationToken(note, token);
+        return firebaseMessagingService.sendNotificationToken(note, token, "LINK_MOCK");
     }
 
     @RequestMapping("/send-notification/topic")

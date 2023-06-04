@@ -34,7 +34,7 @@ public class FirebaseMessagingService {
         return firebaseMessaging.send(message);
     }
 
-    public String sendNotificationToken(AppNotification note, String token) throws FirebaseMessagingException {
+    public String sendNotificationToken(AppNotification note, String token, String redirectLink) throws FirebaseMessagingException {
 
         Notification notification = Notification
                 .builder()
@@ -47,6 +47,7 @@ public class FirebaseMessagingService {
                 .builder()
                 .setToken(token)
                 .setNotification(notification)
+                .putData("link", redirectLink)
                 .build();
 
         return firebaseMessaging.send(message);
